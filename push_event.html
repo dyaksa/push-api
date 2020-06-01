@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push Notification</title>
+    <link href="/manifest.json" rel="manifest">
+</head>
+
+<body>
+    <script src="script.js"></script>
+    <script type="text/javascript">
+        if ("serviceWorker" in navigator) {
+            registerServiceWorker();
+        } else {
+            console.log("serviceWorker tidak didukung");
+        }
+
+        if ("Notification" in window) {
+            notifikasiPermission();
+        } else {
+            console.log("Browser belum mendukung notifikasi");
+        }
+
+        function registerServiceWorker() {
+            return navigator.serviceWorker.register("service-worker.js").then(regist => {
+                console.log("serviceWorker : register serviceWorker berhasil");
+            }).catch(() => {
+                console.log("serviceWorker : register serviceWorker gagal");
+            });
+        }
+
+        function notifikasiPermission() {
+            Notification.requestPermission().then(result => {
+                if (result === "denied") {
+                    console.log("fitur notifikasi tidak diijinkan");
+                    return;
+                } else if (result === "default") {
+                    console.log("pengguna menutup dialog");
+                    return;
+                }
+
+                if ("PushManager" in window) {
+                    navigator.serviceWorker.getRegistration().then(reg => {
+                        reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlBase64ToUint8Array(
+                                "BNFSbXV4kWLSZ9Wth7FWdjk2B0qPI3ICpAg8755kaDNiRAPT0FlbL_y9fxu277QsxjuTzelvfrqJwQjkSey4fUw"
+                            )
+                        }).then(subscribe => {
+                            console.log("berhasil melakukan subscribe dengan endpoint : " +
+                                subscribe.endpoint);
+                            console.log("berhasil melakukan subscribe dengan p256dh key : " +
+                                btoa(String.fromCharCode.apply(
+                                    null, new Uint8Array(subscribe.getKey('p256dh')))))
+                            console.log('Berhasil melakukan subscribe dengan auth key: ', btoa(
+                                String.fromCharCode.apply(
+                                    null, new Uint8Array(subscribe.getKey('auth')))));
+                        }).catch(e => {
+                            console.log("tidak dapat melakukan subscribe " + e);
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

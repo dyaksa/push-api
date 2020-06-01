@@ -1,0 +1,3 @@
+{"publicKey":"BNFSbXV4kWLSZ9Wth7FWdjk2B0qPI3ICpAg8755kaDNiRAPT0FlbL_y9fxu277QsxjuTzelvfrqJwQjkSey4fUw","privateKey":"pdv3zl8wCuYoPg5t2yu6FSvyQFFQX2StA6dSJkM_I-4"}
+
+web-push generate-vapid-keys --json
